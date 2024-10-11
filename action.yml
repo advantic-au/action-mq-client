@@ -16,7 +16,7 @@ outputs:
     value: ${{ steps.download.outputs.client-archive-path }}
   client-install-path:
     description: MQ client installation path
-    value: ${{ steps.install.outputs.client-install-path }}
+    value: ${{ steps.install-path.outputs.client-install-path }}
 
 runs:
   using: composite
@@ -27,24 +27,34 @@ runs:
       run: |
         archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
-    - id: install
+    - id: install-macos
       if: ${{ runner.os == 'macOS' }}
       name: Install on macOS
       shell: bash
       run: |
         sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
         echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
-    - id: install
+    - id: install-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
         mkdir -p /tmp/mqc_install
         tar -zxf ${{ steps.download.outputs.client-archive-path }} -C /tmp/mqc_install
         echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
-    - id: install
+    - id: install-windows
       if: ${{ runner.os == 'Windows' }}
       shell: bash
       run: |
         unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d /tmp/mqc_install
         echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
-
+    - id: install-path
+      shell: bash
+      run: |
+        case ${{ runner.os }} in
+          Linux | Windows)
+            echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
+            ;;
+          macOS)
+            echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
+            ;;
+        esac
