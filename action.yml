@@ -1,0 +1,24 @@
+name: mqc-redist
+description: Downloads the MQ client library redist from IBM
+
+inputs:
+  download-path:
+    description: Path to download the MQ client library
+    default: /tmp/mqc_redist
+    required: true
+  client-version:
+    description: MQ client version
+    required: true
+
+outputs:
+  client-archive-path:
+    description: MQ client archive path
+    value: ${{ steps.download.outputs.client-archive-path }}
+
+runs:
+  using: composite
+  steps:
+    - id: download
+      name: Download MQC redist
+      shell: bash
+      run: echo client-archive-path=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}) >> $GITHUB_OUTPUT
