@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./
+        id: download
         with:
           download-path: /tmp/mqc
           client-version: 9.4.0.0
+      - shell: bash
+        run: echo ${{ steps.download.outputs.client-install-path }}
