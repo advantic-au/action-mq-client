@@ -22,4 +22,5 @@ runs:
       name: Download MQC redist
       shell: bash
       run: |
-        echo client-archive-path=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}; exit $?) >> $GITHUB_OUTPUT
+        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}) || exit $?
+        echo client-archive-path=$archive >> $GITHUB_OUTPUT
