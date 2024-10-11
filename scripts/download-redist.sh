@@ -35,7 +35,7 @@ grep $MQC_REDIST_ARCHIVE $CHECKSUMS > /dev/null || (>&2 echo "Unknown archive $M
 mkdir -p $TARGET_PATH
 cd $TARGET_PATH
 
-grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status 2>&1 > /dev/null || \
+grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status > /dev/null 2>&1 || \
   curl -o $MQC_REDIST_ARCHIVE --retry 10 --retry-connrefused --location --silent --show-error --fail ${BASE_URL}${MQC_REDIST_ARCHIVE}
 
 grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status
