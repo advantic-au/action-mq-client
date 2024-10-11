@@ -14,4 +14,4 @@ jobs:
       - uses: ./
         with:
           download-path: /tmp/mqc
-          mq-client-version: 9.4.0.5
+          client-version: 9.4.0.5
