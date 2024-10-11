@@ -24,3 +24,16 @@ runs:
       run: |
         archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
+    - id: install-macos
+      if: ${{ runner.os == 'macOS' }}
+      name: Install on macOS
+      shell: bash
+      run: sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
+    - id: extract-linux
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: tar -zxf ${{ steps.download.outputs.client-archive-path }} -C /tmp/mqc_install
+    - id: extract-windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: bash
+      run: unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d /tmp/mqc_install
