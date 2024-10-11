@@ -32,7 +32,9 @@ runs:
     - id: extract-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
-      run: tar -zxf ${{ steps.download.outputs.client-archive-path }} -C /tmp/mqc_install
+      run: |
+        mkdir -p /tmp/mqc_install
+        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C /tmp/mqc_install
     - id: extract-windows
       if: ${{ runner.os == 'Windows' }}
       shell: bash
