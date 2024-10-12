@@ -43,12 +43,15 @@ runs:
       if: ${{ runner.os == 'Windows' }}
       shell: bash
       run: |
-        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d ${{ runner.temp }}/mqc
+        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d /tmp/mqc
     - id: install-path
       shell: bash
       run: |
         case ${{ runner.os }} in
-          Linux | Windows)
+          Windows)
+            echo client-install-path=/tmp/mqc >> $GITHUB_OUTPUT
+            ;;
+          Linux)
             echo client-install-path=${{ runner.temp }}/mqc >> $GITHUB_OUTPUT
             ;;
           macOS)
