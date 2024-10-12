@@ -4,7 +4,7 @@ description: Downloads the MQ client library redist from IBM
 inputs:
   download-path:
     description: Path to download the MQ client library
-    default: /tmp/mqc_redist
+    default: ${{ runner.temp }}/mqc_redist
     required: true
   client-version:
     description: MQ client version
@@ -33,26 +33,23 @@ runs:
       shell: bash
       run: |
         sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
-        echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
     - id: install-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
-        mkdir -p /tmp/mqc_install
-        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C /tmp/mqc_install
-        echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
+        mkdir -p ${{ runner.temp }}/mqc
+        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C ${{ runner.temp }}/mqc
     - id: install-windows
       if: ${{ runner.os == 'Windows' }}
       shell: bash
       run: |
-        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d /tmp/mqc_install
-        echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
+        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d ${{ runner.temp }}/mqc
     - id: install-path
       shell: bash
       run: |
         case ${{ runner.os }} in
           Linux | Windows)
-            echo client-install-path=/tmp/mqc_install >> $GITHUB_OUTPUT
+            echo client-install-path=${{ runner.temp }}/mqc >> $GITHUB_OUTPUT
             ;;
           macOS)
             echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT

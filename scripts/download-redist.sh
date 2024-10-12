@@ -38,6 +38,6 @@ cd $TARGET_PATH
 grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status > /dev/null 2>&1 || \
   curl -o $MQC_REDIST_ARCHIVE --retry 10 --retry-connrefused --location --silent --show-error --fail ${BASE_URL}${MQC_REDIST_ARCHIVE}
 
-grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status
+grep $MQC_REDIST_ARCHIVE $CHECKSUMS | $SHA256 --check --status || (>&2 echo "File checksum validation failure"; exit 1)
 
 echo $TARGET_PATH/$MQC_REDIST_ARCHIVE
