@@ -51,7 +51,7 @@ runs:
     - id: install-path
       shell: bash
       run: |
-        case ${{ runner.os }}
+        case ${{ runner.os }} in
           Windows)
             echo client-install-path=$HOMEDRIVE$HOMEPATH >> $GITHUB_OUTPUT
             ;;
