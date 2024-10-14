@@ -2,10 +2,6 @@ name: mqc-redist
 description: Downloads the MQ client library redist from IBM
 
 inputs:
-  download-path:
-    description: Path to download the MQ client library
-    default: ${{ runner.temp }}/mqc_redist
-    required: true
   client-version:
     description: MQ client version
     required: true
@@ -25,7 +21,7 @@ runs:
       name: Download MQC redist
       shell: bash
       run: |
-        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }}) || exit $?
+        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ runner.temp }}/mqc_redist ) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
@@ -33,28 +29,25 @@ runs:
       shell: bash
       run: |
         sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
+        echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
+        echo /opt/mqm/bin >> $GITHUB_PATH
     - id: install-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
-        mkdir -p ${{ runner.temp }}/mqc
-        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C ${{ runner.temp }}/mqc
+        mkdir -p $HOME/mqc
+        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C $HOME/mqc
+        echo client-install-path=$HOME/mqc >> $GITHUB_OUTPUT
+        echo $HOME/mqc/bin >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=$HOME/mqc/lib64" >> "$GITHUB_ENV"
     - id: install-windows
       if: ${{ runner.os == 'Windows' }}
       shell: bash
       run: |
-        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d /tmp/mqc
-    - id: install-path
-      shell: bash
+        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d $HOME/mqc
+        echo client-install-path=$HOMEDRIVE$HOMEPATH >> $GITHUB_OUTPUT
+    - id: install-windows-path
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
       run: |
-        case ${{ runner.os }} in
-          Windows)
-            echo client-install-path=/tmp/mqc >> $GITHUB_OUTPUT
-            ;;
-          Linux)
-            echo client-install-path=${{ runner.temp }}/mqc >> $GITHUB_OUTPUT
-            ;;
-          macOS)
-            echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
-            ;;
-        esac
+        "$env:HOMEPATH/mqc/bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
