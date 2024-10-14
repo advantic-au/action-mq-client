@@ -22,10 +22,11 @@ runs:
   using: composite
   steps:
     - id: download
-      name: Download MQC redist
+      name: Download MQC client
       shell: bash
+      working-directory: ${{ github.action_path }}
       run: |
-        archive=$(${{ github.action_path }}/scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }} ) || exit $?
+        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }} ) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
