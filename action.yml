@@ -29,7 +29,6 @@ runs:
       shell: bash
       run: |
         sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
-        echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
         echo /opt/mqm/bin >> $GITHUB_PATH
     - id: install-linux
       if: ${{ runner.os == 'Linux' }}
@@ -37,7 +36,6 @@ runs:
       run: |
         mkdir -p $HOME/mqc
         tar -zxf ${{ steps.download.outputs.client-archive-path }} -C $HOME/mqc
-        echo client-install-path=$HOME/mqc >> $GITHUB_OUTPUT
         echo $HOME/mqc/bin >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=$HOME/mqc/lib64" >> "$GITHUB_ENV"
     - id: install-windows
@@ -45,9 +43,22 @@ runs:
       shell: bash
       run: |
         unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d $HOME/mqc
-        echo client-install-path=$HOMEDRIVE$HOMEPATH >> $GITHUB_OUTPUT
     - id: install-windows-path
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
         "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+    - id: install-path
+      shell: bash
+      run: |
+        case ${{ runner.os }}
+          Windows)
+            echo client-install-path=$HOMEDRIVE$HOMEPATH >> $GITHUB_OUTPUT
+            ;;
+          Linux)
+            echo client-install-path=$HOME/mqc >> $GITHUB_OUTPUT
+            ;;
+          macOS)
+            echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
+            ;;
+        esac
