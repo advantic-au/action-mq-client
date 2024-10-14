@@ -1,7 +1,11 @@
 name: mqc-redist
-description: Downloads the MQ client library redist from IBM
+description: Download and install the MQ client library from IBM
 
 inputs:
+  download-path:
+    description: Target download path for MQ client
+    required: true
+    default: ${{ runner.temp }}/mqc_download
   client-version:
     description: MQ client version
     required: true
@@ -21,7 +25,7 @@ runs:
       name: Download MQC redist
       shell: bash
       run: |
-        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ runner.temp }}/mqc_redist ) || exit $?
+        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }} ) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
