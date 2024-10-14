@@ -53,7 +53,7 @@ runs:
       run: |
         case ${{ runner.os }} in
           Windows)
-            echo client-install-path=$HOMEDRIVE$HOMEPATH >> $GITHUB_OUTPUT
+            echo client-install-path=$HOMEDRIVE$HOMEPATH/mqc >> $GITHUB_OUTPUT
             ;;
           Linux)
             echo client-install-path=$HOME/mqc >> $GITHUB_OUTPUT
