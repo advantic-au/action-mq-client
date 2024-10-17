@@ -21,6 +21,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.download-path }}
+        key: mqc-${{ runner.os }}-${{ inputs.client-version }}
     - id: download
       name: Download MQC client
       shell: bash
