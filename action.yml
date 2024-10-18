@@ -52,12 +52,8 @@ runs:
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        7z x ${{ steps.download.outputs.client-archive-path }} -o$env:HOMEDRIVE$env:HOMEPATH\mqc
-    - id: install-windows-path
-      if: ${{ runner.os == 'Windows' }}
-      shell: pwsh
-      run: |
-        "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+        7z x ${{ steps.download.outputs.client-archive-path }} -o"$env:HOMEDRIVE$env:HOMEPATH\mqc"
+        "$Env:HOMEDRIVE$Env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
     - id: install-path
       shell: bash
       run: |
