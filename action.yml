@@ -50,9 +50,9 @@ runs:
         echo "LD_LIBRARY_PATH=$HOME/mqc/lib64" >> "$GITHUB_ENV"
     - id: install-windows
       if: ${{ runner.os == 'Windows' }}
-      shell: bash
+      shell: pwsh
       run: |
-        unzip -q -o ${{ steps.download.outputs.client-archive-path }} -d $HOME/mqc
+        7z x ${{ steps.download.outputs.client-archive-path }} -o$env:HOMEDRIVE$env:HOMEPATH\mqc
     - id: install-windows-path
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
