@@ -31,7 +31,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} ${{ inputs.download-path }} ) || exit $?
+        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} "${{ inputs.download-path }}" ) || exit $?
         echo client-archive-path=$archive >> $GITHUB_OUTPUT
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
