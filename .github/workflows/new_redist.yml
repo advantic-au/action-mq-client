@@ -21,10 +21,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          PULL_BRANCH=redist_${{github.run_id}}_${{github.run_number}}
           git diff --stat --exit-code
           if [ $? -ne 0 ]; then
-            git switch -C redist_${{github.run_id}}_${{github.run_number}}
+            git switch -C $PULL_BRANCH
             git commit -am 'redist: New MQC redist' || true
-            git push
+            git push origin --set-upstream $PULL_BRANCH
             gh pr create --title 'New MQC redist' --body 'Created by Github Action' --base ${{github.ref}} || true
           fi
+          exit 0
