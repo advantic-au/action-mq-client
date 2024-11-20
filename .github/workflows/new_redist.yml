@@ -1,5 +1,6 @@
 on:
   workflow_dispatch:
+  schedule: [cron: "40 4 * * *" ]
 
 permissions:
   pull-requests: write
