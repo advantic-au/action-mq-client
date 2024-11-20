@@ -21,7 +21,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --stat --exit-code; then
+          git diff --stat --exit-code
+          if [ $? -ne 0 ]; then
             git switch -C redist_${{github.run_id}}_${{github.run_number}}
             git commit -am 'redist: New MQC redist' || true
             git push
