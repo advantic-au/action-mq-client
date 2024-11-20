@@ -1,0 +1,25 @@
+on:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  new_redist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python new-redist.py checksums.txt
+      - uses: qoomon/actions--setup-git@v1
+      - name: Create pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git commit -am 'redist: New MQC redist' || true
+          gh pr create --title 'New MQC redist' --body ''

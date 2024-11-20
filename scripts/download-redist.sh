@@ -5,7 +5,7 @@ SCRIPT=$(realpath "$0")
 VERSION=$1
 OS=$2
 TARGET_PATH=$3
-CHECKSUMS=$(dirname "$SCRIPT")/checksums.txt
+CHECKSUMS=$(dirname "$SCRIPT")/../checksums.txt
 
 case $OS in
   Linux)
