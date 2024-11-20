@@ -23,4 +23,5 @@ jobs:
         run: |
           git switch -C new_redist
           git commit -am 'redist: New MQC redist' || true
-          gh pr create --title 'New MQC redist' --body '' --head HEAD
+          gh pr create --title 'New MQC redist' --body '' --base main --head HEAD
+
