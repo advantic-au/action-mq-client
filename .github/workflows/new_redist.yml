@@ -24,5 +24,6 @@ jobs:
           if git diff --stat --exit-code; then
             git switch -C redist_${{github.run_id}}_${{github.run_number}}
             git commit -am 'redist: New MQC redist' || true
+            git push
             gh pr create --title 'New MQC redist' --body 'Created by Github Action' --base ${{github.ref}} || true
           fi
