@@ -65,7 +65,7 @@ runs:
             echo client-install-path=$HOMEDRIVE$HOMEPATH\\mqc >> ${GITHUB_OUTPUT}
             ;;
           Linux)
-            echo client-install-path="${HOME}/mqc >> ${GITHUB_OUTPUT}
+            echo client-install-path="${HOME}/mqc" >> ${GITHUB_OUTPUT}
             ;;
           macOS)
             echo client-install-path=/opt/mqm >> ${GITHUB_OUTPUT}
