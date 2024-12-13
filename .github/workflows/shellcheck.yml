@@ -20,6 +20,7 @@ jobs:
         with:
           # Differential ShellCheck requires full git history
           fetch-depth: 0
+          persist-credentials: false
       - id: ShellCheck
         name: Differential ShellCheck
         uses: redhat-plumbers-in-action/differential-shellcheck@v5
