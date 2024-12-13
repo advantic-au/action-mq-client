@@ -31,23 +31,26 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        archive=$(./scripts/download-redist.sh ${{ inputs.client-version }} ${{ runner.os }} "${{ inputs.download-path }}" ) || exit $?
-        echo client-archive-path=$archive >> $GITHUB_OUTPUT
+        archive=$(./scripts/download-redist.sh "${MQ_CLIENT_VERSION}" ${{ runner.os }} "${MQ_DOWNLOAD_PATH}" ) || exit $?
+        echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT}
+      env:
+        MQ_CLIENT_VERSION: ${{ inputs.client-version }}
+        MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
       name: Install on macOS
       shell: bash
       run: |
         sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
-        echo /opt/mqm/bin >> $GITHUB_PATH
+        echo /opt/mqm/bin >> ${GITHUB_PATH}
     - id: install-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
-        mkdir -p $HOME/mqc
-        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C $HOME/mqc
-        echo $HOME/mqc/bin >> $GITHUB_PATH
-        echo "LD_LIBRARY_PATH=$HOME/mqc/lib64" >> "$GITHUB_ENV"
+        mkdir -p "${HOME}/mqc"
+        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C "${HOME}/mqc"
+        echo $HOME/mqc/bin >> ${GITHUB_PATH}
+        echo "LD_LIBRARY_PATH=${HOME}/mqc/lib64" >> "${GITHUB_ENV}"
     - id: install-windows
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
@@ -59,12 +62,12 @@ runs:
       run: |
         case ${{ runner.os }} in
           Windows)
-            echo client-install-path=$HOMEDRIVE$HOMEPATH\\mqc >> $GITHUB_OUTPUT
+            echo client-install-path=$HOMEDRIVE$HOMEPATH\\mqc >> ${GITHUB_OUTPUT}
             ;;
           Linux)
-            echo client-install-path=$HOME/mqc >> $GITHUB_OUTPUT
+            echo client-install-path="${HOME}/mqc >> ${GITHUB_OUTPUT}
             ;;
           macOS)
-            echo client-install-path=/opt/mqm >> $GITHUB_OUTPUT
+            echo client-install-path=/opt/mqm >> ${GITHUB_OUTPUT}
             ;;
         esac

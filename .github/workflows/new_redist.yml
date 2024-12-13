@@ -2,14 +2,15 @@ on:
   workflow_dispatch:
   schedule: [cron: "40 4 * * *" ]
 
-permissions:
-  pull-requests: write
-  contents: write
+permissions: {}
 
 jobs:
   new_redist:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: qoomon/actions--setup-git@v1
@@ -26,8 +27,8 @@ jobs:
         run: |
           PULL_BRANCH=redist_${{github.run_id}}_${{github.run_number}}
           git diff --stat --exit-code || {
-            git switch -C $PULL_BRANCH
+            git switch -C "${PULL_BRANCH}"
             git commit -am 'redist: New MQC redist'
-            git push origin --set-upstream $PULL_BRANCH
-            gh pr create --title 'New MQC redist' --body 'Created by Github Action' --base ${{github.ref}}
+            git push origin --set-upstream "${PULL_BRANCH}"
+            gh pr create --title 'New MQC redist' --body 'Created by Github Action' --base "${GITHUB_REF}"
           }
