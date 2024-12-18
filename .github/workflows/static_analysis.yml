@@ -1,3 +1,4 @@
+name: Zizmor static analysis
 on:
   push:
     branches:
