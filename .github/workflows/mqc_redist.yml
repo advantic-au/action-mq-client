@@ -20,7 +20,7 @@ jobs:
       - uses: ./
         id: download
         with:
-          client-version: 9.4.1.0
+          client-version: 9.4.1.1
       - env:
           MQ_HOME: ${{ steps.download.outputs.client-install-path }}
         run: dspmqver
