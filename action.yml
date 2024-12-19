@@ -37,7 +37,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ inputs.download-path }}
-        key: mqc-${{ runner.os }}-${{ outputs.client-version }}
+        key: mqc-${{ runner.os }}-${{ steps.alias.outputs.client-version }}
     - id: download
       name: Download MQC client
       shell: bash
@@ -46,7 +46,7 @@ runs:
         archive=$(./scripts/download-redist.sh "${MQ_CLIENT_VERSION}" ${{ runner.os }} "${MQ_DOWNLOAD_PATH}" ) || exit $?
         echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT}
       env:
-        MQ_CLIENT_VERSION: ${{ outputs.client-version }}
+        MQ_CLIENT_VERSION: ${{ steps.alias.outputs.client-version }}
         MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
