@@ -14,6 +14,9 @@ outputs:
   client-archive-path:
     description: MQ client archive path
     value: ${{ steps.download.outputs.client-archive-path }}
+  client-version:
+    description: MQ client version downloaded
+    value: ${{ steps.alias.client-version }}
   client-install-path:
     description: MQ client installation path
     value: ${{ steps.install-path.outputs.client-install-path }}
@@ -21,11 +24,20 @@ outputs:
 runs:
   using: composite
   steps:
+    - id: alias
+      name: "Version alias"
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        version=$(./scripts/version-alias.sh "${REQUESTED_VERSION}" ${{ runner.os }} )
+        echo client-version="${version}" >> ${GITHUB_OUTPUT}
+      env:
+        REQUESTED_VERSION: ${{ inputs.client-version }}
     - id: cache
       uses: actions/cache@v4
       with:
         path: ${{ inputs.download-path }}
-        key: mqc-${{ runner.os }}-${{ inputs.client-version }}
+        key: mqc-${{ runner.os }}-${{ outputs.client-version }}
     - id: download
       name: Download MQC client
       shell: bash
@@ -34,7 +46,7 @@ runs:
         archive=$(./scripts/download-redist.sh "${MQ_CLIENT_VERSION}" ${{ runner.os }} "${MQ_DOWNLOAD_PATH}" ) || exit $?
         echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT}
       env:
-        MQ_CLIENT_VERSION: ${{ inputs.client-version }}
+        MQ_CLIENT_VERSION: ${{ outputs.client-version }}
         MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
     - id: install-macos
       if: ${{ runner.os == 'macOS' }}
