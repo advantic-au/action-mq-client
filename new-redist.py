@@ -40,6 +40,6 @@ def new_redist_files(url, output):
         output.write(sha256_url(url + file) + "  " + file + "\n")
         output.flush()
 
-with open(checksum_filename, "a") as checksum_write
+with open(checksum_filename, "a") as checksum_write:
     new_redist_files("https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/redist/", checksum_write)
     new_redist_files("https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/mactoolkit/", checksum_write)
