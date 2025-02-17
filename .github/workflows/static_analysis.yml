@@ -22,7 +22,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-      - uses: taiki-e/install-action@8484225d9734e230a8bf38421a4ffec1cc249372 # v2.46.20
+      - uses: taiki-e/install-action@ad0904967b4c8e3005f6ed2efa1fa74dd9a05f32 # v2.48.13
         with:
           tool: zizmor
       - name: zizmor static analysis check
