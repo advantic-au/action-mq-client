@@ -3,7 +3,7 @@ import hashlib
 import re
 import sys
 from bs4 import BeautifulSoup, SoupStrainer
-
+from requests.adapters import HTTPAdapter, Retry
 
 checksum_filename = sys.argv[1]
 
@@ -20,7 +20,12 @@ def is_redist(file):
 
 def sha256_url(url):
     m = hashlib.sha256()
-    with requests.get(url, stream=True) as response:
+    s = requests.Session()
+    retries = Retry(total=5,
+                    backoff_factor=0.1,
+                    status_forcelist=[ 500, 502, 503, 504 ])
+    s.mount('https://', HTTPAdapter(max_retries=retries))
+    with s.get(url, stream=True, timeout=10) as response:
         response.raise_for_status()
         for chunk in response.iter_content(chunk_size=8192):
             m.update(chunk)
@@ -36,7 +41,7 @@ def new_redist_files(url, output):
     new_files.sort()
 
     for file in new_files:
-        print("Downloading file for sha256: " + file)
+        print("Downloading file for sha256: " + file, flush=True)
         output.write(sha256_url(url + file) + "  " + file + "\n")
         output.flush()
 
