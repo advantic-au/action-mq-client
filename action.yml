@@ -53,22 +53,28 @@ runs:
       name: Install on macOS
       shell: bash
       run: |
-        sudo installer -store -pkg ${{ steps.download.outputs.client-archive-path }} -target /
+        sudo installer -store -pkg ${MQ_CLIENT_ARCHIVE_PATH} -target /
         echo /opt/mqm/bin >> ${GITHUB_PATH}
+      env:
+        MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-linux
       if: ${{ runner.os == 'Linux' }}
       shell: bash
       run: |
         mkdir -p "${HOME}/mqc"
-        tar -zxf ${{ steps.download.outputs.client-archive-path }} -C "${HOME}/mqc"
+        tar -zxf ${MQ_CLIENT_ARCHIVE_PATH} -C "${HOME}/mqc"
         echo $HOME/mqc/bin >> ${GITHUB_PATH}
         echo "LD_LIBRARY_PATH=${HOME}/mqc/lib64" >> "${GITHUB_ENV}"
+      env:
+        MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-windows
       if: ${{ runner.os == 'Windows' }}
       shell: pwsh
       run: |
-        7z x ${{ steps.download.outputs.client-archive-path }} -o"$env:HOMEDRIVE$env:HOMEPATH\mqc"
-        "$Env:HOMEDRIVE$Env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+        7z x "$env:MQ_CLIENT_ARCHIVE_PATH" -o"$env:HOMEDRIVE$env:HOMEPATH\mqc"
+        "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+      env:
+        MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-path
       shell: bash
       run: |
