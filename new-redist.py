@@ -41,7 +41,7 @@ def new_redist_files(url, output):
     new_files.sort()
 
     for file in new_files:
-        print("Downloading file for sha256: " + file)
+        print("Downloading file for sha256: " + file, flush=True)
         output.write(sha256_url(url + file) + "  " + file + "\n")
         output.flush()
 
