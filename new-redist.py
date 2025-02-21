@@ -25,7 +25,7 @@ def sha256_url(url):
                     backoff_factor=0.1,
                     status_forcelist=[ 500, 502, 503, 504 ])
     s.mount('https://', HTTPAdapter(max_retries=retries))
-    with s.get(url, stream=True) as response:
+    with s.get(url, stream=True, timeout=10) as response:
         response.raise_for_status()
         for chunk in response.iter_content(chunk_size=8192):
             m.update(chunk)
