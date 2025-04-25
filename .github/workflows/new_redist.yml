@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
-      - uses: qoomon/actions--setup-git@v1
+      - uses: qoomon/actions--setup-git@8e6bd30ac05e17a81b61169daae62cb6b7e61294 #v1.1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
