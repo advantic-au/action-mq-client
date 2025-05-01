@@ -1,4 +1,4 @@
-name: New MQ Redist
+name: MQ Client Sync
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 permissions: {}
 
 jobs:
-  new_redist:
+  sync_client:
     timeout-minutes: 60
     runs-on: ubuntu-24.04
     permissions:
@@ -23,16 +23,16 @@ jobs:
           python-version: '3.13'
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python new-redist.py checksums.txt
+      - run: python sync-client.py checksums.txt
       - name: Create pull request
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PULL_BRANCH=redist_${{github.run_id}}_${{github.run_number}}
+          PULL_BRANCH=client_${{github.run_id}}_${{github.run_number}}
           git diff --stat --exit-code || {
             git switch -C "${PULL_BRANCH}"
-            git commit -am 'redist: New MQC redist'
+            git commit -am 'client: Sync MQ client list'
             git push origin --set-upstream "${PULL_BRANCH}"
-            gh pr create --title 'New MQC redist' --body 'Created by Github Action' --base "${GITHUB_REF}"
+            gh pr create --title 'Sync MQ client' --body 'Created by Github Action' --base "${GITHUB_REF}"
           }

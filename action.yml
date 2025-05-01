@@ -1,4 +1,4 @@
-name: mqc-redist
+name: MQ client download
 description: Download and install the MQ client library from IBM
 
 inputs:
@@ -29,7 +29,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        version=$(./scripts/version-alias.sh "${REQUESTED_VERSION}" ${{ runner.os }} )
+        version=$(./scripts/version-alias.sh "${REQUESTED_VERSION}" ${{ runner.os }}${{ runner.arch }} )
         echo client-version="${version}" >> ${GITHUB_OUTPUT}
       env:
         REQUESTED_VERSION: ${{ inputs.client-version }}
@@ -43,7 +43,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        archive=$(./scripts/download-redist.sh "${MQ_CLIENT_VERSION}" ${{ runner.os }} "${MQ_DOWNLOAD_PATH}" ) || exit $?
+        archive=$(./scripts/download-client.sh "${MQ_CLIENT_VERSION}" ${{ runner.os }}${{ runner.arch }} "${MQ_DOWNLOAD_PATH}" ) || exit $?
         echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT}
       env:
         MQ_CLIENT_VERSION: ${{ steps.alias.outputs.client-version }}
