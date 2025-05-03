@@ -34,28 +34,38 @@ def sha256_url(url):
             m.update(chunk)
     return m.hexdigest()
 
-def new_client_files(url_list, output):
+def client_url_list(ibm_url_list):
     client_url_list = [];
-    for url in url_list:
+    for url in ibm_url_list:
         response = requests.get(url)
         a_links = BeautifulSoup(response.text, 'html.parser', parse_only=SoupStrainer('a'))
         hrefs = [link["href"] for link in a_links if link.has_attr('href')]
-        client_url_list.extend([urljoin(url, archive_file) for archive_file in hrefs if is_client_archive(archive_file) ])
+        for archive_file in hrefs:
+            if is_client_archive(archive_file):
+                full_client_url = urljoin(url, archive_file)
+                client_file_name = PurePosixPath(unquote(urlparse(full_client_url).path)).parts[-1]
+                sha = files.get(client_file_name)
+                client_url_list.append((client_file_name, full_client_url, sha))
+    return client_url_list
 
-    for client_url in client_url_list:
-        file_name = PurePosixPath(unquote(urlparse(client_url).path)).parts[-1]
-        sha = files.get(file_name)
-        if sha == None:
-            print("Downloading file for sha256: " + file_name, flush=True)
-            sha = sha256_url(client_url)
-        output.write(sha + "  " + file_name + "\n")
-        output.flush()
-
-client_url = [
+ibm_url_list = [
     "https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/redist/?C=M;O=A",
     "https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/mactoolkit/?C=M;O=A",
     "https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/?C=M;O=A"
 ]
 
+client_list = client_url_list(ibm_url_list)
+
 with open(checksum_filename, "w") as checksum_write:
-    new_client_files(client_url, checksum_write)
+    for (file_name, url, sha) in client_list:
+        if sha != None:
+            checksum_write.write(sha + "  " + file_name + "\n")
+            checksum_write.flush()
+
+with open(checksum_filename, "a") as checksum_write:
+    for (file_name, client_url, sha) in client_list:
+        if sha == None:
+            print("Downloading file for sha256: " + file_name, flush=True)
+            sha = sha256_url(client_url)
+            checksum_write.write(sha + "  " + file_name + "\n")
+            checksum_write.flush()

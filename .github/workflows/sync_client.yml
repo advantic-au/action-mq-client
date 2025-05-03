@@ -25,14 +25,14 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python sync-client.py checksums.txt
       - name: Create pull request
+        if: always()
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PULL_BRANCH=client_${{github.run_id}}_${{github.run_number}}
           git diff --stat --exit-code || {
-            git switch -C "${PULL_BRANCH}"
+            git switch -C client_sync
             git commit -am 'client: Sync MQ client list'
-            git push origin --set-upstream "${PULL_BRANCH}"
+            git push origin --set-upstream client_sync
             gh pr create --title 'Sync MQ client' --body 'Created by Github Action' --base "${GITHUB_REF}"
           }
