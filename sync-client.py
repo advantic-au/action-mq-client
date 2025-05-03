@@ -14,12 +14,12 @@ files = dict([tuple(reversed(line.rstrip().split())) for line in checksum_file.r
 checksum_file.close()
 
 linux_x64_re = re.compile(".*?IBM-MQC-Redist-LinuxX64\\.tar\\.gz")
-linux_arm64_re = re.compile(".*?IBM-MQ-Advanced-for-Developers-Non-Install-LinuxARM64\\.tar\\.gz")
+linux_mqadv_re = re.compile(".*?IBM-MQ-Advanced-for-Developers-Non-Install-Linux(ARM64|PPC64LE)\\.tar\\.gz")
 win_re = re.compile(".*?IBM-MQC-Redist-Win64\\.zip")
 mac_re = re.compile(".*?IBM-MQ-DevToolkit-MacOS\\.pkg")
 
 def is_client_archive(file):
-    return win_re.fullmatch(file) or linux_x64_re.fullmatch(file) or linux_arm64_re.fullmatch(file) or mac_re.fullmatch(file)
+    return win_re.fullmatch(file) or linux_x64_re.fullmatch(file) or linux_mqadv_re.fullmatch(file) or mac_re.fullmatch(file)
 
 def sha256_url(url):
     m = hashlib.sha256()
