@@ -26,6 +26,10 @@ case $OS in
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/
     MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
     ;;
+  LinuxS390X)
+    BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/
+    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
+    ;;
   WindowsX64)
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/redist/
     MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQC-Redist-Win64.zip

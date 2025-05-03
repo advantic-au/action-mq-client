@@ -14,7 +14,7 @@ files = dict([tuple(reversed(line.rstrip().split())) for line in checksum_file.r
 checksum_file.close()
 
 linux_x64_re = re.compile(".*?IBM-MQC-Redist-LinuxX64\\.tar\\.gz")
-linux_mqadv_re = re.compile(".*?IBM-MQ-Advanced-for-Developers-Non-Install-Linux(ARM64|PPC64LE)\\.tar\\.gz")
+linux_mqadv_re = re.compile(".*?IBM-MQ-Advanced-for-Developers-Non-Install-Linux(ARM64|PPC64LE|S390X)\\.tar\\.gz")
 win_re = re.compile(".*?IBM-MQC-Redist-Win64\\.zip")
 mac_re = re.compile(".*?IBM-MQ-DevToolkit-MacOS\\.pkg")
 
