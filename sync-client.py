@@ -10,7 +10,7 @@ from pathlib import PurePosixPath
 checksum_filename = sys.argv[1]
 
 checksum_file = open(checksum_filename, "r")
-files = dict([tuple(reversed(line.rstrip().split())) for line in checksum_file.readlines()])
+sha_lookup = dict([tuple(reversed(line.rstrip().split())) for line in checksum_file.readlines()])
 checksum_file.close()
 
 linux_x64_re = re.compile(".*?IBM-MQC-Redist-LinuxX64\\.tar\\.gz")
@@ -44,8 +44,7 @@ def client_url_list(ibm_url_list):
             if is_client_archive(archive_file):
                 full_client_url = urljoin(url, archive_file)
                 client_file_name = PurePosixPath(unquote(urlparse(full_client_url).path)).parts[-1]
-                sha = files.get(client_file_name)
-                client_url_list.append((client_file_name, full_client_url, sha))
+                client_url_list.append((client_file_name, full_client_url))
     return client_url_list
 
 ibm_url_list = [
@@ -57,15 +56,21 @@ ibm_url_list = [
 client_list = client_url_list(ibm_url_list)
 
 with open(checksum_filename, "w") as checksum_write:
-    for (file_name, url, sha) in client_list:
-        if sha != None:
-            checksum_write.write(sha + "  " + file_name + "\n")
+    for (file_name, url) in client_list:
+        if sha_lookup.get(file_name) != None:
+            checksum_write.write(sha_lookup[file_name] + "  " + file_name + "\n")
             checksum_write.flush()
 
 with open(checksum_filename, "a") as checksum_write:
-    for (file_name, client_url, sha) in client_list:
-        if sha == None:
+    for (file_name, client_url) in client_list:
+        if sha_lookup.get(file_name) == None:
             print("Downloading file for sha256: " + file_name, flush=True)
             sha = sha256_url(client_url)
+            sha_lookup[file_name] = sha
             checksum_write.write(sha + "  " + file_name + "\n")
             checksum_write.flush()
+
+with open(checksum_filename, "w") as checksum_write:
+    for (file_name, url) in client_list:
+        checksum_write.write(sha_lookup[file_name] + "  " + file_name + "\n")
+        checksum_write.flush()

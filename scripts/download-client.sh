@@ -16,27 +16,19 @@ esac
 case $OS in
   LinuxX64)
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/redist/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQC-Redist-LinuxX64.tar.gz
+    MQ_CLIENT_ARCHIVE="${VERSION}-IBM-MQC-Redist-LinuxX64.tar.gz"
     ;;
-  LinuxARM64)
+  LinuxARM64|LinuxPPC64LE|LinuxS390X)
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxARM64.tar.gz
-    ;;
-  LinuxPPC64LE)
-    BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
-    ;;
-  LinuxS390X)
-    BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
+    MQ_CLIENT_ARCHIVE="${VERSION}-IBM-MQ-Advanced-for-Developers-Non-Install-${OS}.tar.gz"
     ;;
   WindowsX64)
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/redist/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQC-Redist-Win64.zip
+    MQ_CLIENT_ARCHIVE="${VERSION}-IBM-MQC-Redist-Win64.zip"
     ;;
   macOS*)
     BASE_URL=https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqdev/mactoolkit/
-    MQ_CLIENT_ARCHIVE=${VERSION}-IBM-MQ-DevToolkit-MacOS.pkg
+    MQ_CLIENT_ARCHIVE="${VERSION}-IBM-MQ-DevToolkit-MacOS.pkg"
     ;;
   *)
     >&2 echo "Unsupported OS ${OS}"

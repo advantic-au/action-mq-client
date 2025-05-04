@@ -11,12 +11,12 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-24.04
     permissions:
-      pull-requests: write
       contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          ref: client_sync
       - uses: qoomon/actions--setup-git@8e6bd30ac05e17a81b61169daae62cb6b7e61294 #v1.1
       - uses: actions/setup-python@v5
         with:
@@ -31,8 +31,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git diff --stat --exit-code || {
-            git switch -C client_sync
             git commit -am 'client: Sync MQ client list'
-            git push origin --set-upstream client_sync
-            gh pr create --title 'Sync MQ client' --body 'Created by Github Action' --base "${GITHUB_REF}"
+            git push
           }
