@@ -113,7 +113,7 @@ runs:
 
         case ${{ runner.os }} in
           Windows) echo client-install-path=$(cygpath -w "${client-install-path}") >> ${GITHUB_OUTPUT} ;;
-          *) echo client-install-path="${client-install-path}") >> ${GITHUB_OUTPUT} ;;
+          *) echo client-install-path="${client-install-path}" >> ${GITHUB_OUTPUT} ;;
         esac
       env:
         REQUESTED_OS: ${{ inputs.os }}
