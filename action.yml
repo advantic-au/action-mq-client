@@ -116,6 +116,7 @@ runs:
           Linux|Windows) set client-install-path="${HOME}/mqc" ;;
           macOS) set client-install-path=/opt/mqm ;;
         esac
+        echo ${client-install-path}
 
         case ${{ runner.os }} in
           Windows) echo client-install-path=$(cygpath -w "${client-install-path}") >> ${GITHUB_OUTPUT} ;;
