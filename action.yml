@@ -85,7 +85,7 @@ runs:
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-linux
-      if: ${{ inputs.os == 'Linux' && runner.os == 'Linux' && input.arch == runner.arch }}
+      if: ${{ inputs.os == 'Linux' && runner.os == 'Linux' && inputs.arch == runner.arch }}
       shell: bash
       run: |
         echo $HOME/mqc/bin >> ${GITHUB_PATH}
@@ -98,7 +98,7 @@ runs:
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-windows
-      if: ${{ runner.os == 'Windows' && runner.os == 'Windows' && input.arch == runner.arch }}
+      if: ${{ runner.os == 'Windows' && runner.os == 'Windows' && inputs.arch == runner.arch }}
       shell: pwsh
       run: |
         "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
