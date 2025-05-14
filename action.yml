@@ -108,7 +108,7 @@ runs:
       run: |
         "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
 
-    - id: client-path
+    - id: install-path
       name: Set the client-install-path
       shell: bash
       run: |
