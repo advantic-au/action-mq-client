@@ -37,7 +37,6 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows-latest
           - ubuntu-latest
           - macos-latest
         client:
@@ -48,7 +47,6 @@ jobs:
           - os: Linux
             arch: S390X
         exclude:
-          - { os: windows-latest, client: { os: Windows, arch: X64 } }
           - { os: ubuntu-latest, client: { os: Linux, arch: X64 } }
 
     runs-on: ${{ matrix.os }}
