@@ -45,6 +45,16 @@ jobs:
             arch: X64
           - os: Linux
             arch: S390X
+        exclude:
+          - os: windows-latest
+          - client:
+            - os: Windows
+            - arch: X64
+          - os: ubuntu-latest
+          - client:
+            - os: Linux
+              arch: X64
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
