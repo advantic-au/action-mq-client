@@ -55,4 +55,4 @@ jobs:
         with:
           client-version: latest
           os: ${{ matrix.client.os }}
-          arch: ${{ matric.client.arch }}
+          arch: ${{ matrix.client.arch }}
