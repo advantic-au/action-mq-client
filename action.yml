@@ -107,13 +107,13 @@ runs:
       shell: bash
       run: |
         case ${REQUESTED_OS} in
-          Linux|Windows) client-install-path="${HOME}/mqc";;
-          macOS) client-install-path=/opt/mqm;;
+          Linux|Windows) set client-install-path="${HOME}/mqc" ;;
+          macOS) set client-install-path=/opt/mqm ;;
         esac
 
         case ${{ runner.os }} in
-          Windows) echo client-install-path=$(cygpath -w "${client-install-path}") >> ${GITHUB_OUTPUT};;
-          *) echo client-install-path="${client-install-path}") >> ${GITHUB_OUTPUT};;
+          Windows) echo client-install-path=$(cygpath -w "${client-install-path}") >> ${GITHUB_OUTPUT} ;;
+          *) echo client-install-path="${client-install-path}") >> ${GITHUB_OUTPUT} ;;
         esac
       env:
         REQUESTED_OS: ${{ inputs.os }}
