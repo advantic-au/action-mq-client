@@ -54,22 +54,24 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         archive=$(./scripts/download-client.sh "${MQ_CLIENT_VERSION}" "${REQUESTED_OS}${REQUESTED_ARCH}" "${MQ_DOWNLOAD_PATH}" ) || exit $?
-        echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT}
+        case ${{ runner.os }} in
+          Windows) client-archive-path=$(cygwin -u "${archive}") >> ${GITHUB_OUTPUT};;
+          *) client-archive-path="${archive}" >> ${GITHUB_OUTPUT};;
+        esac
       env:
         MQ_CLIENT_VERSION: ${{ steps.alias.outputs.client-version }}
         MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
         REQUESTED_OS: ${{ inputs.os }}
-        REQUESTED_ARCH: ${{ inputs.arch }}
-    
+        REQUESTED_ARCH: ${{ inputs.arch }}    
     - id: extract-macos
       if: ${{ inputs.os == 'macOS' }}
       name: Extract on macOS
       shell: bash
-      run: sudo installer -store -pkg ${MQ_CLIENT_ARCHIVE_PATH} -target /
+      run: sudo installer -store -pkg "${MQ_CLIENT_ARCHIVE_PATH}" -target /
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-macos
-      if: ${{ inputs.os == 'macOS' }}
+      if: ${{ inputs.os == 'macOS' && runner.os == 'macOS' }}
       name: Install on macOS
       shell: bash
       run: echo /opt/mqm/bin >> ${GITHUB_PATH}
@@ -83,7 +85,7 @@ runs:
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-linux
-      if: ${{ runner.os == 'Linux' }}
+      if: ${{ inputs.os == 'Linux' && runner.os == 'Linux' && input.arch == runner.arch }}
       shell: bash
       run: |
         echo $HOME/mqc/bin >> ${GITHUB_PATH}
@@ -92,11 +94,11 @@ runs:
     - id: extract-windows
       if: ${{ inputs.os == 'Windows' }}
       shell: bash
-      run: 7z x ${MQ_CLIENT_ARCHIVE_PATH} -o"${HOME}/mqc"
+      run: 7z x "${MQ_CLIENT_ARCHIVE_PATH}" -o"${HOME}/mqc"
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-windows
-      if: ${{ runner.os == 'Windows' }}
+      if: ${{ runner.os == 'Windows' && runner.os == 'Windows' && input.arch == runner.arch }}
       shell: pwsh
       run: |
         "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
