@@ -11,23 +11,17 @@ on:
 permissions: {}
 
 jobs:
-  download:
+  install:
     strategy:
       fail-fast: false
       matrix:
-        build:
-          - os: windows-latest
-            mq-version: latest
-          - os: ubuntu-latest
-            mq-version: latest
-          - os: macos-latest
-            mq-version: latest
-          - os: ubuntu-latest
-            mq-version: latest
-          - os: ubuntu-24.04-arm
-            mq-version: latest
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+          - ubuntu-24.04-arm
 
-    runs-on: ${{ matrix.build.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +29,30 @@ jobs:
       - uses: ./
         id: download
         with:
-          client-version: ${{ matrix.build.mq-version }}
-      - env:
-          MQ_HOME: ${{ steps.download.outputs.client-install-path }}
-        run: dspmqver
+          client-version: latest
+      - run: dspmqver
+  cross:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+        client:
+          - os: Windows
+            arch: X86
+          - os: Linux
+            arch: X86
+          - os: Linux
+            arch: s390x
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./
+        id: download
+        with:
+          client-version: latest
+          os: ${{ matrix.client.os }}
+          arch: ${{ matric.client.arch }}
