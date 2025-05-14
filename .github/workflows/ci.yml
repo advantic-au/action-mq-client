@@ -38,6 +38,7 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
+          - macos-latest
         client:
           - os: Windows
             arch: X64
