@@ -62,20 +62,20 @@ runs:
         REQUESTED_ARCH: ${{ inputs.arch }}
     
     - id: extract-macos
-      if: ${{ input.os == 'macOS' }}
+      if: ${{ inputs.os == 'macOS' }}
       name: Extract on macOS
       shell: bash
       run: sudo installer -store -pkg ${MQ_CLIENT_ARCHIVE_PATH} -target /
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-macos
-      if: ${{ input.os == 'macOS' }}
+      if: ${{ inputs.os == 'macOS' }}
       name: Install on macOS
       shell: bash
       run: echo /opt/mqm/bin >> ${GITHUB_PATH}
 
     - id: extract-linux
-      if: ${{ input.os == 'Linux' }}
+      if: ${{ inputs.os == 'Linux' }}
       shell: bash
       run: |
         mkdir -p "${HOME}/mqc"
@@ -90,7 +90,7 @@ runs:
         echo "LD_LIBRARY_PATH=${HOME}/mqc/lib64" >> "${GITHUB_ENV}"
       
     - id: extract-windows
-      if: ${{ input.os == 'Windows' }}
+      if: ${{ inputs.os == 'Windows' }}
       shell: bash
       run: 7z x ${MQ_CLIENT_ARCHIVE_PATH} -o"${HOME}/mqc"
       env:
@@ -104,7 +104,7 @@ runs:
     - id: client-path
       shell: bash
       run: |
-        case ${{ input.os }} in
+        case ${{ inputs.os }} in
           Windows)
             echo client-install-path=$HOMEDRIVE$HOMEPATH\\mqc >> ${GITHUB_OUTPUT}
             ;;
