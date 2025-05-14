@@ -55,7 +55,7 @@ runs:
       run: |
         archive=$(./scripts/download-client.sh "${MQ_CLIENT_VERSION}" "${REQUESTED_OS}${REQUESTED_ARCH}" "${MQ_DOWNLOAD_PATH}" ) || exit $?
         case ${{ runner.os }} in
-          Windows) echo client-archive-path=$(cygwin -u "${archive}") >> ${GITHUB_OUTPUT};;
+          Windows) echo client-archive-path=$(cygpath -u "${archive}") >> ${GITHUB_OUTPUT};;
           *) echo client-archive-path="${archive}" >> ${GITHUB_OUTPUT};;
         esac
       env:
