@@ -33,7 +33,7 @@ runs:
   using: composite
   steps:
     - id: alias
-      name: "Version alias"
+      name: MQ Version alias resolution
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
@@ -44,12 +44,13 @@ runs:
         REQUESTED_OS: ${{ inputs.os }}
         REQUESTED_ARCH: ${{ inputs.arch }}
     - id: cache
+      name: Cache MQ client library
       uses: actions/cache@v4
       with:
         path: ${{ inputs.download-path }}
         key: mqc-${{ inputs.os }}${{ inputs.arch }}-${{ steps.alias.outputs.client-version }}
     - id: download
-      name: Download MQC client
+      name: Download ${{ inputs.os }} ${{ inputs.arch }} MQ client library
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
@@ -62,21 +63,22 @@ runs:
         MQ_CLIENT_VERSION: ${{ steps.alias.outputs.client-version }}
         MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
         REQUESTED_OS: ${{ inputs.os }}
-        REQUESTED_ARCH: ${{ inputs.arch }}    
+        REQUESTED_ARCH: ${{ inputs.arch }}
     - id: extract-macos
+      name: Extract macOS MQ client
       if: ${{ inputs.os == 'macOS' }}
-      name: Extract on macOS
       shell: bash
       run: sudo installer -store -pkg "${MQ_CLIENT_ARCHIVE_PATH}" -target /
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-macos
+      name: Install MQ client library on macOS
       if: ${{ inputs.os == 'macOS' && runner.os == 'macOS' }}
-      name: Install on macOS
       shell: bash
       run: echo /opt/mqm/bin >> ${GITHUB_PATH}
 
     - id: extract-linux
+      name: Extract Linux MQ client library
       if: ${{ inputs.os == 'Linux' }}
       shell: bash
       run: |
@@ -85,25 +87,29 @@ runs:
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-linux
+      name: Install MQ client library on Linux
       if: ${{ inputs.os == 'Linux' && runner.os == 'Linux' && inputs.arch == runner.arch }}
       shell: bash
       run: |
         echo $HOME/mqc/bin >> ${GITHUB_PATH}
         echo "LD_LIBRARY_PATH=${HOME}/mqc/lib64" >> "${GITHUB_ENV}"
-      
+
     - id: extract-windows
+      name: Extract Windows MQ client library
       if: ${{ inputs.os == 'Windows' }}
       shell: bash
       run: 7z x "${MQ_CLIENT_ARCHIVE_PATH}" -o"${HOME}/mqc"
       env:
         MQ_CLIENT_ARCHIVE_PATH: ${{ steps.download.outputs.client-archive-path }}
     - id: install-windows
+      name: Install MQ client library on Windows
       if: ${{ runner.os == 'Windows' && runner.os == 'Windows' && inputs.arch == runner.arch }}
       shell: pwsh
       run: |
         "$env:HOMEDRIVE$env:HOMEPATH\mqc\bin64" | Out-File -FilePath "$env:GITHUB_PATH" -Append
-    
+
     - id: client-path
+      name: Set the client-install-path
       shell: bash
       run: |
         case ${REQUESTED_OS} in
