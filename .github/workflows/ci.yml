@@ -40,11 +40,11 @@ jobs:
           - ubuntu-latest
         client:
           - os: Windows
-            arch: X86
+            arch: X64
           - os: Linux
-            arch: X86
+            arch: X64
           - os: Linux
-            arch: s390x
+            arch: S390X
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
