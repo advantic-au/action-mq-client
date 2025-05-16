@@ -43,9 +43,9 @@ runs:
         REQUESTED_VERSION: ${{ inputs.client-version }}
         REQUESTED_OS: ${{ inputs.os }}
         REQUESTED_ARCH: ${{ inputs.arch }}
-    - id: cache
-      name: Cache MQ client library
-      uses: actions/cache@v4
+    - id: cache-restore
+      name: Cache restore of MQ library
+      uses: actions/cache/restore@v4
       with:
         path: ${{ inputs.download-path }}
         key: mqc-${{ inputs.os }}${{ inputs.arch }}-${{ steps.alias.outputs.client-version }}
@@ -64,6 +64,13 @@ runs:
         MQ_DOWNLOAD_PATH: ${{ inputs.download-path }}
         REQUESTED_OS: ${{ inputs.os }}
         REQUESTED_ARCH: ${{ inputs.arch }}
+    - id: cache-save
+      name: Cache save of MQ library
+      if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ inputs.download-path }}
+        key: mqc-${{ inputs.os }}${{ inputs.arch }}-${{ steps.alias.outputs.client-version }}
     - id: extract-macos
       name: Extract macOS MQ client
       if: ${{ inputs.os == 'macOS' }}
