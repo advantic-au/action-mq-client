@@ -9,6 +9,7 @@ inputs:
   client-version:
     description: MQ client version
     required: true
+    default: latest
   os:
     description: OS of MQ client
     required: true
