@@ -25,7 +25,7 @@ outputs:
     value: ${{ steps.download.outputs.client-archive-path }}
   client-version:
     description: MQ client version downloaded
-    value: ${{ steps.alias.client-version }}
+    value: ${{ steps.alias.outputs.client-version }}
   client-install-path:
     description: MQ client installation path
     value: ${{ steps.install-path.outputs.client-install-path }}
