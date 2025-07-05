@@ -33,4 +33,5 @@ jobs:
           git diff --stat --exit-code || {
             git commit -am 'client: Sync MQ client list'
             git push
+            gh pr view --json number >/dev/null 2>&1 || gh pr create --base main --title "Client Sync ${{ github.run_id }}" --body "Synchronise with latest MQ libraries"
           }
