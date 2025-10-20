@@ -4,6 +4,8 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
+    cooldown:
+      default-days: 4
     directory: "/"
     schedule:
       interval: "weekly"
@@ -11,6 +13,8 @@ updates:
     labels:
       - "dependencies"
   - package-ecosystem: "pip"
+    cooldown:
+      default-days: 4
     directory: "/"
     schedule:
       interval: "weekly"
