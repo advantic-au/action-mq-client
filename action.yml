@@ -46,7 +46,7 @@ runs:
         REQUESTED_ARCH: ${{ inputs.arch }}
     - id: cache-restore
       name: Cache restore of MQ library
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: ${{ inputs.download-path }}
         key: mqc-${{ inputs.os }}${{ inputs.arch }}-${{ steps.alias.outputs.client-version }}
@@ -68,7 +68,7 @@ runs:
     - id: cache-save
       name: Cache save of MQ library
       if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v5
       with:
         path: ${{ inputs.download-path }}
         key: mqc-${{ inputs.os }}${{ inputs.arch }}-${{ steps.alias.outputs.client-version }}
