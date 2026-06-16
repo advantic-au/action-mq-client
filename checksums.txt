@@ -92,12 +92,15 @@ ae965e6fa4352d608a5267fdc45a3111569d5786e59d5c30489f88cffe7769fa  9.4.0.21-IBM-M
 d01fa65721639040755ab155291d1f6327bd429e4f503748abe0f3b3a04fa853  9.4.5.1-IBM-MQC-Redist-LinuxX64.tar.gz
 9e3616a8787eb5eb37dcfe4186e3249867c6bab6cc3199dcc897e2cba7252ba3  9.3.0.40-IBM-MQC-Redist-Win64.zip
 f569a64ecf493f7b9307db13dbe83aab67f00a75eee1435ad63e5ce9b044b3db  9.3.0.40-IBM-MQC-Redist-LinuxX64.tar.gz
+7558e584a92ee565156563a0f95656d17e0e234c53a906b5fdc70a18138db8aa  10.0.0.0-IBM-MQC-Redist-Win64.zip
+2c987fa786a027baec10668e2e2a5bdacfd0fe5b0e37147c8a490e28fde5b877  10.0.0.0-IBM-MQC-Redist-LinuxX64.tar.gz
 8910309ef8394a3b7314b86759f1aef5f85d401208da814104bbe0e0538f1007  9.4.0.0-IBM-MQ-DevToolkit-MacOS.pkg
 f806abff09a4b43fd8f84de6eaf105c0a1fdf6460b7f394b22701cae5fc3df16  9.4.1.0-IBM-MQ-DevToolkit-MacOS.pkg
 7f2f6e5a96f91cba600ed084b1b2ef9a128620fc6f9483185d62268aa80aa618  9.4.2.0-IBM-MQ-DevToolkit-MacOS.pkg
 657db145757f5c6fe915353c98b465211b33534f5e58ec7763628b54b5478098  9.4.3.0-IBM-MQ-DevToolkit-MacOS.pkg
 979d60cbdc345e9e5cc08f867895f5b545b488f6b0ae0338611afbe248259bf8  9.4.4.0-IBM-MQ-DevToolkit-MacOS.pkg
 1ebdb991ceeefa10ba17a86b8a339bf522655294410b1804ec555888b66df36c  9.4.5.0-IBM-MQ-DevToolkit-MacOS.pkg
+1e8e35dbb00f7ac61d7f7f76561de11d737b61d22627ea964ccf4195f3c7fa6a  10.0.0.0-IBM-MQ-DevToolkit-MacOS.pkg
 17ff963cb74d094c7f17525be72e787d7a5631d68bbefa80ab41c29abbdc1fbf  9.3.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
 219368d296429c5dcc70e28d5eb794a6ed7075602d61822a73b83c11687a9800  9.3.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
 13c82d83cf996bbf115b3e85466ecb8f60fd5ec128cfe9513948975b455125a2  9.3.2.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
@@ -175,3 +178,6 @@ d56b0d40de7384307278e209096ac11b9254e0462009df290d2e156792717c30  9.4.0.21-IBM-M
 46b7a5fac67f69cd61d352ef238e2c40ca3bf06956aafa359bccef0f23f6faf5  9.4.5.1-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
 064956b5e35db352fd77362af0a35a2f88995bb196b115257255f77b119da321  9.4.5.1-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
 b96857bc3b6b8dcc1bfe3c45e49afa0b9079b27a118df483d0702cf33b01d3ec  9.4.5.1-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxARM64.tar.gz
+70804f9b433e2d61cbd4905691f50e7b6db743485cb2c2f9b2017737f83f337c  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
+478a398c8fa80cef7b429b0da71498315523b64907ead6594b80e5df064228e2  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
+4f9d66ee0db9edf0b85eae10cefe3f0263a399aed77346e3cbbdb35f8ca53d90  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxARM64.tar.gz
