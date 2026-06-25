@@ -94,6 +94,10 @@ d01fa65721639040755ab155291d1f6327bd429e4f503748abe0f3b3a04fa853  9.4.5.1-IBM-MQ
 f569a64ecf493f7b9307db13dbe83aab67f00a75eee1435ad63e5ce9b044b3db  9.3.0.40-IBM-MQC-Redist-LinuxX64.tar.gz
 7558e584a92ee565156563a0f95656d17e0e234c53a906b5fdc70a18138db8aa  10.0.0.0-IBM-MQC-Redist-Win64.zip
 2c987fa786a027baec10668e2e2a5bdacfd0fe5b0e37147c8a490e28fde5b877  10.0.0.0-IBM-MQC-Redist-LinuxX64.tar.gz
+383f531accf4d089325a814365df966f79b7c07655002c2fb2aa2042f8758951  9.4.0.25-IBM-MQC-Redist-Win64.zip
+a5dd527c2b3caf93bd35633f86059f6eab477c9884f56334651f854a6bdf5f56  9.4.0.25-IBM-MQC-Redist-LinuxX64.tar.gz
+4273bfdce3df68ec79e6ee5b2cd080e4dcfd77b0014d212753ee74f23e94aa11  9.3.0.41-IBM-MQC-Redist-Win64.zip
+ba464664a05b2fd1d4da55227e633611b6afa6bc0f6a3ff17acc5eedd2fb4af1  9.3.0.41-IBM-MQC-Redist-LinuxX64.tar.gz
 8910309ef8394a3b7314b86759f1aef5f85d401208da814104bbe0e0538f1007  9.4.0.0-IBM-MQ-DevToolkit-MacOS.pkg
 f806abff09a4b43fd8f84de6eaf105c0a1fdf6460b7f394b22701cae5fc3df16  9.4.1.0-IBM-MQ-DevToolkit-MacOS.pkg
 7f2f6e5a96f91cba600ed084b1b2ef9a128620fc6f9483185d62268aa80aa618  9.4.2.0-IBM-MQ-DevToolkit-MacOS.pkg
@@ -181,3 +185,5 @@ b96857bc3b6b8dcc1bfe3c45e49afa0b9079b27a118df483d0702cf33b01d3ec  9.4.5.1-IBM-MQ
 70804f9b433e2d61cbd4905691f50e7b6db743485cb2c2f9b2017737f83f337c  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
 478a398c8fa80cef7b429b0da71498315523b64907ead6594b80e5df064228e2  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
 4f9d66ee0db9edf0b85eae10cefe3f0263a399aed77346e3cbbdb35f8ca53d90  10.0.0.0-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxARM64.tar.gz
+6f66fdc58d133666985b55b0cd800609084060082c458f3b25ac387dd89ff918  9.4.0.25-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxS390X.tar.gz
+dbc979cd0dbddf3bd4ad24f924a8c49f69627dbfbb4f5475b547eac23904a73d  9.4.0.25-IBM-MQ-Advanced-for-Developers-Non-Install-LinuxPPC64LE.tar.gz
