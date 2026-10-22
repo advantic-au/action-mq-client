@@ -49,9 +49,11 @@ Pin a tag (`@stable`) or any other ref, such as `@main` for the development stat
 | `latest` | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 |
 | `10.0` | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 | 10.0.1.0 |
 | `9.4` | - | - | 9.4.5.1 | 9.4.5.1 | 9.4.5.1 | 9.4.5.1 | 9.4.5.1 |
+| `9.3` | - | - | 9.3.5.0 | - | 9.3.0.0 | 9.3.0.0 | 9.3.5.0 |
 
 Anything not in the table is passed through unchanged, so an exact version such as `9.4.4.0`
-works as long as it is listed in [`checksums.txt`](checksums.txt).
+works as long as it is listed in [`checksums.txt`](checksums.txt). A `-` means IBM publishes no
+archive for that platform in that series, so that combination cannot be installed.
 
 ### Cross-platform downloads
 

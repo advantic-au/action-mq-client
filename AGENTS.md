@@ -13,7 +13,7 @@ macOS) and exports their paths to the caller's workflow.
 | Path | Role |
 | --- | --- |
 | `action.yml` | The composite action: inputs, outputs, download/cache/extract/install steps |
-| `aliases.json` | Alias → concrete version per OS+arch (currently `latest`, `10.0`, `9.4`) |
+| `aliases.json` | Alias → concrete version per OS+arch (currently `latest`, `10.0`, `9.4`, `9.3`) |
 | `checksums.txt` | 166 lines: sha256 for every IBM archive ever published. The allow-list and integrity root |
 | `sync-client.py` | Scrapes IBM download directories and refreshes `checksums.txt` |
 | `scripts/version-alias.sh` | Resolves an alias/version to a concrete version for a given OS+arch |
@@ -87,11 +87,12 @@ nothing to run locally that exercises `action.yml` end to end.
   versions in `requirements.txt` or workflow `uses:` lines.
 - Removing support for an old MQ version means deleting its lines from `checksums.txt` and its alias entries
   from `aliases.json` (see commit `Remove version 9.2`).
-- `aliases.json` is maintained **by hand**, one entry per `major.minor` series (`latest`, `10.0`, `9.4`) plus one key
-  per supported OS+arch. When a new series appears, bump `latest`, add the series key, and bump the new `latest`
-  patches of the previous series - don't touch older frozen series.
+- `aliases.json` is maintained **by hand**, one entry per `major.minor` series (`latest`, `10.0`, `9.4`, `9.3`) plus
+  one key per supported OS+arch. When a new series appears, bump `latest`, add the series key, and bump the new
+  `latest` patches of the previous series - don't touch older frozen series.
 - A new upstream archive in `checksums.txt` does **not** get an alias automatically, and `sync-client.py` *prunes*
   entries IBM no longer publishes, so an alias can silently point at a version that is no longer downloadable
-  (`download-client.sh` then fails with `Unknown archive`). Stale entries are deleted rather than repointed: `9.3`
-  was dropped entirely and `9.4` lost its `macOSARM64`/`macOSX64` keys when IBM stopped publishing those `.pkg`
-  files. An unresolvable alias exits non-zero instead of failing over to another version.
+  (`download-client.sh` then fails with `Unknown archive`). Keep the pinned versions honest against
+  `checksums.txt`: `9.4` lost its `macOSARM64`/`macOSX64` keys when IBM stopped publishing those `.pkg` files, and
+  `9.3` covers only LinuxX64/WindowsX64 (`9.3.5.0`) plus LinuxPPC64LE/S390X (`9.3.0.0`) because IBM never published
+  9.3 clients for ARM64 or macOS. An unresolvable alias exits non-zero instead of failing over to another version.
