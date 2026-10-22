@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a problem with the MQ client download action
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem.
+
+        Include the workflow snippet and the log output of the failing step - most problems are
+        the action resolving a different version or archive than expected, or the installed
+        client not being found by a later step.
+
+        Do not report security issues here, see the
+        [security policy](https://github.com/advantic-au/action-mq-client/blob/main/SECURITY.md) instead.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: What did the action do, and what did you expect it to do instead?
+    validations:
+      required: true
+  - type: input
+    id: action-ref
+    attributes:
+      label: Action ref
+      description: The full `uses:` value, including the ref you pinned
+      placeholder: advantic-au/action-mq-client@stable
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Workflow snippet
+      description: The step that uses this action, including its `with:` inputs
+      render: yaml
+    validations:
+      required: true
+  - type: dropdown
+    id: runner
+    attributes:
+      label: Runner
+      multiple: false
+      options:
+        - ubuntu-latest
+        - ubuntu-24.04-arm
+        - windows-latest
+        - macos-latest
+        - self-hosted
+        - other
+    validations:
+      required: true
+  - type: input
+    id: resolved-inputs
+    attributes:
+      label: Inputs and resolved version
+      description: The inputs you passed and the `client-version` output the action reported
+      placeholder: "client-version: latest, os: Linux, arch: X64 -> output 10.0.1.0"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Output of the failing step. This is rendered as shell, so no backticks needed.
+      render: shell
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues for this problem
+          required: true
+        - label: I read the README's supported platforms and aliases table
+          required: true
+        - label: This is not a security issue (see the security policy for private reporting)
+          required: true
