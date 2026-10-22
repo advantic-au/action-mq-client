@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement to the MQ client download action
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the workflow, MQ setup or platform this would help with
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Inputs, platforms or behaviour you would like the action to support
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you are using today
+  - type: input
+    id: mq-version
+    attributes:
+      label: MQ client version or alias
+      description: If the request is about the client itself, which version or alias is involved?
+      placeholder: latest
+  - type: markdown
+    attributes:
+      value: |
+        Note that the action can only install archives IBM publishes - a version or platform
+        that is not listed in [checksums.txt](https://github.com/advantic-au/action-mq-client/blob/main/checksums.txt)
+        cannot be added by this action.
