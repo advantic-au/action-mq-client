@@ -138,7 +138,7 @@ download listings by a scheduled workflow.
 The action is a composite action that runs shell scripts, so it needs the tools present on the
 GitHub-hosted runner images: `bash`, `jq` and `curl` (plus `tar`, and `7z` on Windows). The
 `ci.yml` workflow exercises it on `windows-latest`, `ubuntu-latest`, `macos-latest` and
-`ubuntu-24.04-arm`.
+`ubuntu-26.04-arm`.
 
 macOS installation uses `sudo installer`, so it needs a runner where `sudo` is available.
 
