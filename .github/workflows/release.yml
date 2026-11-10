@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Explicit X.Y.Z version, overriding inference
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: action-mq-client-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: version
+        name: Determine the next version
+        env:
+          DISPATCH_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "Skipping: a newer commit is already on main" >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          last=$(git tag --list --sort=-v:refname 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+
+          if [ -n "${DISPATCH_VERSION}" ]; then
+            version="${DISPATCH_VERSION}"
+          elif [ -z "${last}" ]; then
+            version=1.0.0
+          else
+            version=$(python3 scripts/next-version.py "${last}")
+          fi
+
+          if [ -n "${last}" ]; then
+            range="${last}..HEAD"
+            since="${last}"
+          else
+            range="HEAD"
+            since="the beginning"
+          fi
+
+          if [ "${version}" = "none" ]; then
+            {
+              echo "No release for this push."
+              echo
+              echo "Commits examined:"
+              git log --format='- %s' "${range}"
+              echo
+              echo "Nothing here is a feat, a fix, or a breaking change, so no version is published."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          tag="v${version}"
+          major="v${version%%.*}"
+
+          {
+            echo "Releasing \`${tag}\` (moving \`${major}\`)."
+            echo
+            echo "Commits since ${since}:"
+            git log --format='- %s' "${range}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          {
+            echo "tag=${tag}"
+            echo "major=${major}"
+            echo "last=${last}"
+            echo "skip=false"
+          } >> "$GITHUB_OUTPUT"
+      - name: Publish the release
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ steps.version.outputs.tag }}
+          MAJOR: ${{ steps.version.outputs.major }}
+          LAST: ${{ steps.version.outputs.last }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "${TAG}" --repo "${REPO}" > /dev/null 2>&1; then
+            echo "\`${TAG}\` already exists, reconciling the moving tags" >> "$GITHUB_STEP_SUMMARY"
+          elif [ -n "${LAST}" ]; then
+            gh release create "${TAG}" --repo "${REPO}" --target "$GITHUB_SHA" \
+              --title "${TAG}" --generate-notes --notes-start-tag "${LAST}"
+          else
+            gh release create "${TAG}" --repo "${REPO}" --target "$GITHUB_SHA" \
+              --title "${TAG}" --generate-notes
+          fi
+
+          if gh api "repos/${REPO}/git/ref/tags/${MAJOR}" > /dev/null 2>&1; then
+            gh api --method PATCH "repos/${REPO}/git/refs/tags/${MAJOR}" \
+              -f sha="$GITHUB_SHA" -F force=true > /dev/null
+          else
+            gh api --method POST "repos/${REPO}/git/refs" \
+              -f ref="refs/tags/${MAJOR}" -f sha="$GITHUB_SHA" > /dev/null
+          fi
+
+          if gh api "repos/${REPO}/git/ref/tags/stable" > /dev/null 2>&1; then
+            gh api --method PATCH "repos/${REPO}/git/refs/tags/stable" \
+              -f sha="$GITHUB_SHA" -F force=true > /dev/null
+          fi

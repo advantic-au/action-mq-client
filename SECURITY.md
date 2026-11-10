@@ -2,10 +2,13 @@
 
 ## Supported versions
 
-This action is consumed by git ref, so the reference you pin decides what you run:
+This action is consumed by git ref, so it is important to know which refs are maintained:
 
-- The `stable` ref and `main` get fixes.
-- Older refs - fixed tags and commit SHAs - are not patched. Move to a newer ref to pick up a fix.
+- The `v1` tag and `main` get fixes.
+- The `stable` tag is deprecated. It still points at the latest release while consumers migrate to
+  `v1`, and will be removed.
+- Immutable release tags (`v1.2.3`) and commit SHAs are not patched. Move to a newer ref to pick up
+  a fix.
 
 ## Reporting a vulnerability
 

@@ -30,9 +30,10 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           git diff --stat --exit-code || {
-            git commit -am 'client: Sync MQ client list'
+            git commit -am 'feat: sync MQ client list'
             git push
           }
-          gh pr create --base main --title "Client Sync ${{ github.run_id }}" --body "Synchronise with latest MQ libraries" || true
+          gh pr create --base main --title "feat: sync MQ client list" --body "Synchronise with latest MQ libraries (run ${RUN_ID})" || true
