@@ -119,14 +119,16 @@ jobs:
             # actually is, which in a skipped run is behind HEAD
             if published "${VERSION_TAG}"; then
               target=$(git rev-parse "refs/tags/${VERSION_TAG}" 2>/dev/null) || target=""
-              refs="${MAJOR}"
-              major_sha=$(resolve_sha "${MAJOR}")
-              if [ -n "${major_sha}" ] && [ "$(resolve_sha stable)" = "${major_sha}" ]; then
-                refs="${refs} stable"
+              if [ -n "${target}" ]; then
+                refs="${MAJOR}"
+                major_sha=$(resolve_sha "${MAJOR}")
+                if [ -n "${major_sha}" ] && [ "$(resolve_sha stable)" = "${major_sha}" ]; then
+                  refs="${refs} stable"
+                fi
               fi
             fi
           else
-            refs="${VERSION_TAG} ${MAJOR}"
+            refs="${MAJOR}"
             # follow a stable that tracks the major tag; a stable that was deleted, or
             # that sits on an older release, is left alone and never (re)created
             major_sha=$(resolve_sha "${MAJOR}")
