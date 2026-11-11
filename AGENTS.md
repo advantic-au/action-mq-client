@@ -62,16 +62,22 @@ that `needs: [install, cross]`, so a red CI run **skips** the release rather tha
 the reusable `.github/workflows/release.yml`, which:
 
 1. exits early if `HEAD` is not `origin/main`, so a queued run never releases a stale commit,
-2. computes the next version, and exits with a summary if the range warrants no release,
+2. computes the next version. A range with no `feat`/`fix`/breaking commit releases nothing, but still
+   **reconciles**: it realigns the moving tags with the latest *published* `vX.Y.Z`, so a tag move that failed
+   on an earlier run is repaired by the next push rather than silently leaving `v1` behind,
 3. creates `vX.Y.Z` (`gh release create … --generate-notes`) and force-moves the moving tags.
+
+`release.yml` resolves what to publish in a `tags` step shared by both paths: it only advances a ref when the
+release behind it is published (`isDraft` false), and it reconciles to the **tag's** commit, never `HEAD`, since
+in a skipped run `HEAD` is already past the release.
 
 There is no release-side smoke test: `action.yml` itself is verified by the `install` and `cross` jobs that
 gate this one, so re-running the action here would only duplicate work on a second runner.
 
 Ref scheme: `vX.Y.Z` tags are immutable release tags; `v1` is a moving major tag; `main` is development.
-`stable` is a deprecated moving tag kept only while consumers migrate to `v1` - the workflow moves it when
-it exists, so deleting the tag later needs no workflow change. Both `v1` and `stable` are advanced with
-`gh api`, never `git push`, so `persist-credentials: false` stays intact.
+`stable` is a deprecated moving tag kept only while consumers migrate to `v1`. It is only ever moved while it
+still tracks the major tag, so deleting it needs no workflow change and it is **never recreated**. All moving
+refs are advanced with `gh api`, never `git push`, so `persist-credentials: false` stays intact.
 
 `scripts/next-version.py` picks the bump from the **conventional commits** since the last `vX.Y.Z` tag, taking
 the highest of:
@@ -120,6 +126,9 @@ as an escape hatch when a range deliberately classifies as `none`.
 - **If PRs are squash-merged, the PR title becomes the commit subject on `main`** and therefore drives the bump -
   a PR titled `Fix cache key` releases nothing. Merge commits are more forgiving, because `git log` then sees the
   branch's own conventional commits.
+- A range that releases nothing still runs the tag reconciliation, so a failed tag move heals on the next push.
+  That path needs no `stable` and no `v1` to exist: it reads the major tag's commit and only moves refs that are
+  already there, which is why a repo with no tags yet does not get a `stable` invented for it.
 - `renovate.json` groups non-major `github-actions` updates into a single automerged PR (`groupName` on the rule that
   already matched `minor`/`patch`/`pin`/`digest`), so one merge means one patch release rather than one per bump.
   Do **not** add `major` to that `matchUpdateTypes` list - `separateMajorMinor` defaults to true and majors need review.
