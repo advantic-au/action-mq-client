@@ -25,7 +25,7 @@ body:
     attributes:
       label: Action ref
       description: The full `uses:` value, including the ref you pinned
-      placeholder: advantic-au/action-mq-client@stable
+      placeholder: advantic-au/action-mq-client@v1
     validations:
       required: true
   - type: textarea

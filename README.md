@@ -24,19 +24,19 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Install MQ client
-        uses: advantic-au/action-mq-client@stable
+        uses: advantic-au/action-mq-client@v1
         with:
           client-version: latest
 
       - run: dspmqver
 ```
 
-Pin a tag (`@stable`) or any other ref, such as `@main` for the development state.
+Pin a tag (`@v1`) or any other ref, such as `@main` for the development state.
 
 ### Version pinning
 
 ```yaml
-      - uses: advantic-au/action-mq-client@stable
+      - uses: advantic-au/action-mq-client@v1
         with:
           client-version: 10.0.1.0   # exact version
 ```
@@ -62,7 +62,7 @@ archive for that platform in that series, so that combination cannot be installe
 platform you are not running on:
 
 ```yaml
-      - uses: advantic-au/action-mq-client@stable
+      - uses: advantic-au/action-mq-client@v1
         id: mq
         with:
           client-version: latest
@@ -96,7 +96,7 @@ itself.
 | `client-install-path` | Where the client is installed for the requested `os`: `$HOME/mqc` on Linux and Windows, `/opt/mqm` on macOS |
 
 ```yaml
-      - uses: advantic-au/action-mq-client@stable
+      - uses: advantic-au/action-mq-client@v1
         id: mq
         with:
           client-version: latest
@@ -141,6 +141,30 @@ GitHub-hosted runner images: `bash`, `jq` and `curl` (plus `tar`, and `7z` on Wi
 `ubuntu-26.04-arm`.
 
 macOS installation uses `sudo installer`, so it needs a runner where `sudo` is available.
+
+## Releases and versioning
+
+Every functional change merged to `main` is released automatically, so there is no separate
+release step to run. The `ci.yml` workflow must pass first, and only then is a tag created.
+
+| Ref | Meaning |
+| --- | --- |
+| `v1` | Moving tag for the current major version. Recommended for most consumers, since it picks up fixes without changing your workflow. |
+| `v1.2.3` | An immutable release tag. It never moves, so use it when you need a fully reproducible pin. |
+| `main` | The development state. Unreleased and may break between runs. |
+| `stable` | Deprecated. Still points at the latest release while consumers migrate to `v1`, and will be removed. |
+
+Version bumps follow [Conventional Commits](https://www.conventionalcommits.org) on `main`:
+
+- **major** for a breaking change (`feat!:`, `fix!:` or a `BREAKING CHANGE:` footer) - renaming or
+  removing an input or output, changing where the client is installed or which environment
+  variables are set, dropping a supported platform, or dropping an alias,
+- **minor** for a new input, output, platform or alias, including support for a newly published
+  MQ client version,
+- **patch** for everything else.
+
+A push whose commits contain no feature, fix or breaking change (for example documentation or
+dependency maintenance) does not produce a release at all.
 
 ## License
 

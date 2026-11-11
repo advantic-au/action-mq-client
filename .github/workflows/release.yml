@@ -1,0 +1,205 @@
+name: Release
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Explicit X.Y.Z version, overriding inference
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: action-mq-client-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: version
+        name: Determine the next version
+        env:
+          DISPATCH_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "Skipping: a newer commit is already on main" >> "$GITHUB_STEP_SUMMARY"
+            echo "action=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          last=$(git tag --list --sort=-v:refname 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+
+          if [ -n "${DISPATCH_VERSION}" ]; then
+            if ! printf '%s' "${DISPATCH_VERSION}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "Invalid version: ${DISPATCH_VERSION}" >&2
+              exit 1
+            fi
+            version="${DISPATCH_VERSION}"
+          elif [ -z "${last}" ]; then
+            version=1.0.0
+          else
+            version=$(python3 scripts/next-version.py "${last}")
+          fi
+
+          if [ -n "${last}" ]; then
+            range="${last}..HEAD"
+            since="${last}"
+          else
+            range="HEAD"
+            since="the beginning"
+          fi
+
+          if [ "${version}" = "none" ]; then
+            {
+              echo "No release for this push."
+              echo
+              echo "Commits examined:"
+              git log --format='- %s' "${range}"
+              echo
+              echo "Nothing here is a feat, a fix, or a breaking change, so no version is published."
+            } >> "$GITHUB_STEP_SUMMARY"
+            action=reconcile
+            tag="${last}"
+          else
+            action=release
+            tag="v${version}"
+            {
+              echo "Releasing \`${tag}\` (moving \`${tag%%.*}\`)."
+              echo
+              echo "Commits since ${since}:"
+              git log --format='- %s' "${range}"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          {
+            echo "action=${action}"
+            echo "tag=${tag}"
+            echo "major=${tag%%.*}"
+            echo "last=${last}"
+          } >> "$GITHUB_OUTPUT"
+      - id: tags
+        name: Resolve the refs to publish
+        if: steps.version.outputs.action != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ACTION: ${{ steps.version.outputs.action }}
+          VERSION_TAG: ${{ steps.version.outputs.tag }}
+          MAJOR: ${{ steps.version.outputs.major }}
+        run: |
+          set -euo pipefail
+
+          # published, because a tag without a release must never move a moving ref
+          published() {
+            gh release view "$1" --repo "${REPO}" --json isDraft -q '.isDraft' 2>/dev/null | grep -qx false
+          }
+
+          # a moving ref is advanced through the API, never git push, so
+          # persist-credentials stays false and no token reaches the checkout
+          resolve_sha() {
+            gh api "repos/${REPO}/git/ref/tags/$1" -q '.object.sha' 2>/dev/null || true
+          }
+
+          refs=""
+          target="$(git rev-parse HEAD)"
+          if [ "${ACTION}" = "reconcile" ]; then
+            # the release that is being missed: realign the moving refs with where it
+            # actually is, which in a skipped run is behind HEAD
+            if published "${VERSION_TAG}"; then
+              target=$(git rev-parse "refs/tags/${VERSION_TAG}" 2>/dev/null) || target=""
+              if [ -n "${target}" ]; then
+                refs="${MAJOR}"
+                major_sha=$(resolve_sha "${MAJOR}")
+                if [ -n "${major_sha}" ] && [ "$(resolve_sha stable)" = "${major_sha}" ]; then
+                  refs="${refs} stable"
+                fi
+              fi
+            fi
+          else
+            refs="${MAJOR}"
+            # follow a stable that tracks the major tag; a stable that was deleted, or
+            # that sits on an older release, is left alone and never (re)created
+            major_sha=$(resolve_sha "${MAJOR}")
+            if [ -n "${major_sha}" ] && [ "$(resolve_sha stable)" = "${major_sha}" ]; then
+              refs="${refs} stable"
+            fi
+            if [ -z "${VERSION_TAG}" ]; then
+              echo "Nothing to publish; set a tag first" >&2
+              exit 1
+            fi
+          fi
+
+          {
+            echo "refs=${refs}"
+            echo "target=${target}"
+          } >> "$GITHUB_OUTPUT"
+      - name: Publish the release
+        if: steps.version.outputs.action == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ steps.version.outputs.tag }}
+          LAST: ${{ steps.version.outputs.last }}
+          TARGET: ${{ steps.tags.outputs.target }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "${TAG}" --repo "${REPO}" > /dev/null 2>&1; then
+            # the release for this version already exists, so this run would only move
+            # the refs: refuse unless it is at the commit being released, or the refs
+            # would end up on a commit whose release is somewhere else
+            read -r obj_type obj_sha < <(gh api "repos/${REPO}/git/ref/tags/${TAG}" -q '.object.type + " " + .object.sha')
+            if [ "${obj_type}" = "tag" ]; then
+              obj_sha=$(gh api "repos/${REPO}/git/tags/${obj_sha}" -q '.object.sha')
+            fi
+            if [ "${obj_sha}" != "${GITHUB_SHA}" ]; then
+              echo "\`${TAG}\` is at ${obj_sha}, not ${GITHUB_SHA}" >&2
+              exit 1
+            fi
+            echo "\`${TAG}\` already exists at ${GITHUB_SHA}" >> "$GITHUB_STEP_SUMMARY"
+          elif [ -n "${LAST}" ]; then
+            gh release create "${TAG}" --repo "${REPO}" --target "${TARGET}" \
+              --title "${TAG}" --generate-notes --notes-start-tag "${LAST}"
+          else
+            gh release create "${TAG}" --repo "${REPO}" --target "${TARGET}" \
+              --title "${TAG}" --generate-notes
+          fi
+      - name: Move the moving tags
+        if: steps.version.outputs.action != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          REFS: ${{ steps.tags.outputs.refs }}
+          TARGET: ${{ steps.tags.outputs.target }}
+        run: |
+          set -euo pipefail
+
+          [ -n "${REFS}" ] || exit 0
+
+          # force=true updates an existing ref; without a ref there is nothing to force,
+          # so the first time one is created at the same commit. already-current refs are
+          # left untouched so a re-run is a no-op.
+          for ref in ${REFS}; do
+            current=$(gh api "repos/${REPO}/git/ref/tags/${ref}" -q '.object.sha' 2>/dev/null) || current=""
+            [ "${current}" = "${TARGET}" ] && continue
+            if [ -n "${current}" ]; then
+              gh api --method PATCH "repos/${REPO}/git/refs/tags/${ref}" \
+                -f sha="${TARGET}" -F force=true > /dev/null
+            else
+              gh api --method POST "repos/${REPO}/git/refs" \
+                -f ref="refs/tags/${ref}" -f sha="${TARGET}" > /dev/null
+            fi
+            echo "\`${ref}\` -> \`${TARGET}\`" >> "$GITHUB_STEP_SUMMARY"
+          done
