@@ -42,6 +42,10 @@ jobs:
           last=$(git tag --list --sort=-v:refname 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
 
           if [ -n "${DISPATCH_VERSION}" ]; then
+            if ! printf '%s' "${DISPATCH_VERSION}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "Invalid version: ${DISPATCH_VERSION}" >&2
+              exit 1
+            fi
             version="${DISPATCH_VERSION}"
           elif [ -z "${last}" ]; then
             version=1.0.0
